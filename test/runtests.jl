@@ -1,6 +1,6 @@
-using REPLACE_PKG
+using OdysseusEngine
 using Test
 
-@testset "REPLACE_PKG.jl" begin
+@testset "OdysseusEngine.jl" begin
     # Write your tests here.
 end

@@ -1,14 +1,14 @@
 using Documenter
 push!(LOAD_PATH, "../src/")
-using REPLACE_PKG
+using OdysseusEngine
 
-DocMeta.setdocmeta!(REPLACE_PKG, :DocTestSetup, :(using REPLACE_PKG); recursive=true)
+DocMeta.setdocmeta!(OdysseusEngine, :DocTestSetup, :(using OdysseusEngine); recursive=true)
 
 makedocs(
-    sitename="REPLACE_PKG Documentation",
-    modules = [REPLACE_PKG],
+    sitename="OdysseusEngine Documentation",
+    modules = [OdysseusEngine],
     pages = [
-        "REPLACE_PKG" => "index.md",
+        "OdysseusEngine" => "index.md",
         "API" => "api.md"
     ],
     format = Documenter.HTML(
@@ -17,5 +17,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/OmegaLambda1998/REPLACE_PKG.jl.git"
+    repo = "github.com/OmegaLambda1998/OdysseusEngine.jl.git"
 )

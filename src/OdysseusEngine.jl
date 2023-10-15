@@ -1,4 +1,4 @@
-module REPLACE_PKG
+module OdysseusEngine
 
 # External packages
 using TOML
@@ -8,20 +8,10 @@ using StatProfilerHTML
 
 # Internal Packages
 include("RunModule.jl")
-using .RunModule: run_REPLACE_PKG
+using .RunModule: run_OdysseusEngine
 
 # Exports
 export main 
-
-Base.@ccallable function julia_main()::Cint
-    try
-        main()
-    catch
-        Base.invokelatest(Base.display_error, Base.catch_stack())
-        return 1
-    end
-    return 0
-end
 
 """
     get_args()
@@ -53,11 +43,16 @@ function main()
     args = get_args()
     verbose = args["verbose"]
     toml_path = args["input"]
+    profile = args["profile"]
+    main(toml_path, verbose, profile)
+end
+
+function main(toml_path::AbstractString, verbose::Bool, profile::Bool)
     toml = setup_input(toml_path, verbose)
-    if args["profile"]
-        @profilehtml run_REPLACE_PKG(toml)
+    if profile 
+        @profilehtml run_OdysseusEngine(toml)
     else
-        run_REPLACE_PKG(toml)
+        run_OdysseusEngine(toml)
     end
 end
 
