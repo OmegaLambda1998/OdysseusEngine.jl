@@ -1,6 +1,9 @@
 using Documenter
-push!(LOAD_PATH, "../src/")
-using OdysseusEngine
+using Pkg
+push!(LOAD_PATH, joinpath(@__DIR__, "../src/"))
+Pkg.develop(path=abspath(joinpath(@__DIR__, "../")))
+using OdysseusEngine 
+
 
 DocMeta.setdocmeta!(OdysseusEngine, :DocTestSetup, :(using OdysseusEngine); recursive=true)
 

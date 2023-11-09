@@ -3,6 +3,8 @@ module RunModule
 # External Packages
 
 # Internal Packages
+include("ECSModule.jl")
+using .ECSModule
 
 # Exports
 export run_OdysseusEngine

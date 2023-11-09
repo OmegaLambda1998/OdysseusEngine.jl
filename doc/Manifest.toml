@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.0"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "60554e906f303696644331ecd212bd8c139d8553"
+project_hash = "43aeaa9419a7f57aa05b45eaa852959c2c93376a"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -210,6 +210,12 @@ version = "2022.10.11"
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
+
+[[deps.OdysseusEngine]]
+deps = ["ArgParse", "BetterInputFiles", "StatProfilerHTML", "TOML"]
+path = "/home/patricka/.julia/dev/OdysseusEngine/"
+uuid = "a6a548a2-59d8-4125-a589-b564a0a8a58e"
+version = "0.1.0"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
