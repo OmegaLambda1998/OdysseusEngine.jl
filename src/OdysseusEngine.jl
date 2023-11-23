@@ -5,10 +5,11 @@ using TOML
 using BetterInputFiles 
 using ArgParse
 using StatProfilerHTML
+using Reexport
 
 # Internal Packages
 include("RunModule.jl")
-using .RunModule: run_OdysseusEngine
+@reexport using .RunModule
 
 # Exports
 export main 

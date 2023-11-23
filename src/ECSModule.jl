@@ -4,148 +4,10 @@ module ECSModule
 # Internal Packages 
 
 # External Packages 
-
-# Exports
-
-# ------------
-# Component 
-# ------------
-export Component
-"""
-    abstract type Component
-
-Component is an abstract type that represents components.
-"""
-abstract type Component end
-
-export Origin2D
-"""
-    mutable struct Origin2D <: Component
-
-Origin2D is a component that represents the origin of an entity in 2D space. The origin is the point about which the entity rotates and scales. The origin is specified as a fraction of the entity's width and height, with 0 being the left or top of the entity and 1 being the right or bottom of the entity. The default is 0.5, which is the center of the entities bounding box.
-
-# Fields
-- `x::Float64`: The x-coordinate of the origin. Between 0 and 1, with 0 being the left and 1 being the right of the entity. Default is 0.5.
-- `y::Float64`: The y-coordinate of the origin. Between 0 and 1, with 0 being the top and 1 being the bottom of the entity. Default is 0.5.
-"""
-@kwdef mutable struct Origin2D <: Component
-    x::Float64=0.5
-    y::Float64=0.5
-    function Origin2D(x::Float64, y::Float64)
-        if x < 0 || x > 1
-            throw(ArgumentError("x must be between 0 and 1"))
-        end
-        if y < 0 || y > 1
-            throw(ArgumentError("y must be between 0 and 1"))
-        end
-        new(x, y)
-    end
-end
-
-export Position2D
-"""
-    mutable struct Position2D <: Component
-
-Position2D is a component that represents the position of an entity in 2D space. Sets the [`Origin2D`](origin) to this point. The position is specified as a fraction of the screen width and height, with 0 being the left or top of the screen and 1 being the right or bottom of the screen. The default is 0.5, which is the center of the screen.
-
-# Fields
-- `x::Float64`: The x-coordinate of the position. Between 0 and 1, with 0 being the left and 1 being the right of the screen. Default is 0.5.
-- `y::Float64`: The y-coordinate of the position. Between 0 and 1, with 0 being the top and 1 being the bottom of the screen. Default is 0.5.
-"""
-@kwdef mutable struct Position2D <: Component
-    x::Float64=0.5
-    y::Float64=0.5
-end
-
-export Velocity2D
-"""
-    mutable struct Velocity2D <: Component
-
-Velocity2D is a component that represents the velocity of an entity in 2D space in units of 1/10 screen space per second, so that an entity with a velocity of 1 would cross the screen in 10 seconds.
-
-# Fields
-- `dx::Float64`: The x-component of the velocity. In units of 1/10 horizontal screen space per second. Default is 0.
-- `dy::Float64`: The y-component of the velocity. In units of 1/10 vertical screen space per second. Default is 0.
-"""
-@kwdef mutable struct Velocity2D <: Component
-    dx::Float64=0.0
-    dy::Float64=0.0
-end
-
-export Acceleration2D
-"""
-    mutable struct Acceleration2D <: Component
-
-Acceleration2D is a component that represents the acceleration of an entity in 2D space in units of 1/10 screen space per second per second, so that an entity with an acceleration of 1 would have a velocity of 1 screen space per second in 10 seconds. 
-
-# Fields
-- `ddx::Float64`: The x-component of the acceleration. In units of 1/10 horizontal screen space per second per second. Default is 0.
-- `ddy::Float64`: The y-component of the acceleration. In units of 1/10 vertical screen space per second per second. Default is 0.
-"""
-@kwdef mutable struct Acceleration2D <: Component
-    ddx::Float64=0.0
-    ddy::Float64=0.0
-end
-
-export Rotation2D
-"""
-    mutable struct Rotation2D <: Component
-
-Rotation2D is a component that represents the rotation of an entity in 2D space in radians.
-
-# Fields
-- `θ::Float64`: The angle of rotation in radians. Default is 0.
-"""
-@kwdef mutable struct Rotation2D <: Component
-    θ::Float64=0.0
-end
-
-export AngularVelocity2D
-"""
-    mutable struct AngularVelocity2D <: Component
-
-AngularVelocity2D is a component that represents the angular velocity of an entity in 2D space in radians per second.
-
-# Fields
-- `ω::Float64`: The angular velocity in radians per second. Default is 0.
-"""
-@kwdef mutable struct AngularVelocity2D <: Component
-    ω::Float64=0.0
-end
-
-export Scale2D
-"""
-    mutable struct Scale2D <: Component
-
-Scale2D is a component that represents the scale of an entity in 2D space.
-
-# Fields
-- `Δx::Float64`: The x-component of the scale. Default is 1.
-- `Δy::Float64`: The y-component of the scale. Default is 1. 
-"""
-@kwdef mutable struct Scale2D <: Component
-    Δx::Float64=1.0
-    Δy::Float64=1.0
-end
-
-export Transform2D
-"""
-    mutable struct Transform2D <: Component
-
-Transform2D is a component that represents the transformation of an entity in 2D space. The transformation is made up of [`Origin2D`](origin), [`Position2D`](position), [`Velocity2D`](velocity), [`Acceleration2D`](acceleration), [`Rotation2D`](rotation), [`AngularVelocity2D`](angular velocity), and [`Scale2D`](scale) components. 
-"""
-@kwdef mutable struct Transform2D <: Component
-    origin::Origin2D=Origin2D()
-    position::Position2D=Position2D()
-    velocity::Velocity2D=Velocity2D()
-    acceleration::Acceleration2D=Acceleration2D()
-    rotation::Rotation2D=Rotation2D()
-    angular_velocity::AngularVelocity2D=AngularVelocity2D()
-    scale::Scale2D=Scale2D()
-end
+using InteractiveUtils
 
 # ------------
-# Entity
+# Entities
 # ------------
 export EntityType
 """
@@ -171,7 +33,58 @@ Entity is a struct that represents an entity. An entity is a container for compo
 end
 
 # ------------
-# Entity Manager
+# Components
+# ------------
+export Component
+"""
+    abstract type Component
+
+Component is an abstract type that represents components.
+"""
+abstract type Component end
+
+"""
+    abstract type CompositeComponent <: Component
+
+CompositeComponent is an abstract type that represents components that are made up of other components.
+"""
+abstract type CompositeComponent end
+
+"""
+    mutable struct Relative <: Component
+
+Relative is a struct that represents a component that is relative to another component.
+
+# Fields
+- `main_component::Component`: The component that this component is relative to.
+- `relative_component::Component`: The component that is relative to the main component.
+- `offsets::Base.Pairs`: The offsets of the relative component from the main component.
+"""
+@kwdef mutable struct Relative <: Component
+    main_component::Component
+    relative_component::Component
+    offsets::Base.Pairs
+end
+
+"""
+    Relative(main_component::Component; offsets...)
+
+Create a [`Relative`](relative) component that is relative to the given component.
+
+# Arguments
+- `main_component::Component`: The component that this component is relative to.
+- `offsets...`: The offsets of the relative component from the main component.
+"""
+function Relative(main_component::Component; offsets...)
+    relative_component = deepcopy(main_component)
+    for (key, value) in offsets 
+        setfield!(relative_component, key, getfield(relative_component, key) + value)
+    end
+    return Relative(main_component, relative_component, offsets)
+end
+
+# ------------
+# ECS Manager
 # ------------
 
 export ECSManager
@@ -184,7 +97,7 @@ ECSManager provides functionality to create and remove [`Entity`](entity) object
 - `max_id::Int64`: The maximum id of the entities created so far.
 - `free_ids::Vector{Int64}`: The ids of the entities that have been removed and can be reused.
 - `entities::Vector{Entity}`: The entities that have been created.
-- `components::Dict{DataType, Dict{Entity, Component}}`: A dictionary that maps component types to a vector of dictionaries that map entities to components of that type.
+- `components::Dict{DataType, Dict{Entity, Component}}`: A dictionary that maps component types to a dictionary that map entities to components of that type.
 """
 @kwdef mutable struct ECSManager
     max_id::Int64=0
@@ -253,29 +166,154 @@ function add_component!(ecs_manager::ECSManager, entity::Entity, component::Comp
 end
 
 """
-    add_component(ecs_manager::ECSManager, entity::Entity, component::Transform2D)
+    add_component(ecs_manager::ECSManager, entity::Entity, component::CompositeComponent)
 
-Add all fields of the given [`Transform2D`](transform) to the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
+Add all fields of the given [`CompositeComponent`](composite component) to the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
 
 # Arguments
 - `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
-- `entity::Entity`: The [`Entity`](entity) to add the [`Transform2D`](transform) to.
-- `component::Transform2D`: The [`Transform2D`](transform) to add to the [`Entity`](entity).
+- `entity::Entity`: The [`Entity`](entity) to add the [`CompositeComponent`](composite component) to.
+- `component::CompositeComponent`: The [`CompositeComponent`](composite component) to add to the [`Entity`](entity).
 """
-function add_component!(ecs_manager::ECSManager, entity::Entity, component::Transform2D)
-    for comp in [getfield(component, field) for field in fieldnames(Transform2D)]
+function add_component!(ecs_manager::ECSManager, entity::Entity, component::CompositeComponent)
+    for comp in [getfield(component, field) for field in fieldnames(typeof(component))]
         add_component!(ecs_manager, entity, comp)
     end
 end
 
+export get_component
+"""
+    get_component(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+
+Get the [`Component`](component) of the given type from the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
+
+# Arguments
+- `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
+- `entity::Entity`: The [`Entity`](entity) to get the [`Component`](component) from.
+- `component_type::DataType`: The type of the [`Component`](component) to get from the [`Entity`](entity).
+"""
+function get_component(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+    if !haskey(ecs_manager.components, component_type)
+        throw(ArgumentError("Entity does not have component of type $component_type"))
+    end
+    component_dict = ecs_manager.components[component_type]
+    if !haskey(component_dict, entity)
+        throw(ArgumentError("Entity does not have component of type $component_type"))
+    end
+    return component_dict[entity]
+end
+
+export set_component!
+"""
+    set_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType; kwargs...)
+
+Set the [`Component`](component) of the given type to the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
+
+# Arguments
+- `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
+- `entity::Entity`: The [`Entity`](entity) to set the [`Component`](component) to.
+- `component_type::DataType`: The type of the [`Component`](component) to set to the [`Entity`](entity).
+- `kwargs...`: The keyword arguments to pass to the constructor of the [`Component`](component). 
+"""
+function set_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType; kwargs...)
+    component = component_type(;kwargs...)
+    add_component!(ecs_manager, entity, component)
+end
+
+export shift_component!
+"""
+    shift_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType; kwargs...)
+
+Shift the values of the fields of the [`Component`](component) of the given type in the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
+
+# Arguments
+- `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
+- `entity::Entity`: The [`Entity`](entity) to shift the [`Component`](component) of.
+- `component_type::DataType`: The type of the [`Component`](component) to shift in the [`Entity`](entity).
+- `kwargs...`: The keyword arguments to pass to the constructor of the [`Component`](component).
+"""
+function shift_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType; kwargs...)
+    component = get_component(ecs_manager, entity, component_type)
+    for (key, value) in kwargs
+        setfield!(component, key, getfield(component, key) + value)
+    end
+end
+
+export remove_component!
+"""
+    remove_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+
+Remove the [`Component`](component) of the given type from the given [`Entity`](entity) in the [`ECSManager`](ECS manager).
+
+# Arguments
+- `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
+- `entity::Entity`: The [`Entity`](entity) to remove the [`Component`](component) from.
+- `component_type::DataType`: The type of the [`Component`](component) to remove from the [`Entity`](entity).
+"""
+function remove_component!(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+    if !haskey(ecs_manager.components, component_type)
+        throw(ArgumentError("Entity does not have component of type $component_type"))
+    end
+    component_dict = ecs_manager.components[component_type]
+    if !haskey(component_dict, entity)
+        throw(ArgumentError("Entity does not have component of type $component_type"))
+    end
+    delete!(component_dict, entity)
+    if length(component_dict) == 0
+        delete!(ecs_manager.components, component_type)
+    end
+end
+
+"""
+    has_component(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+
+Check if the given [`Entity`](entity) in the [`ECSManager`](ECS manager) has a [`Component`](component) of the given type.
+
+# Arguments
+- `ecs_manager::ECSManager`: The [`ECSManager`](ECS manager) that keeps track of the entities.
+- `entity::Entity`: The [`Entity`](entity) to check for the [`Component`](component).
+- `component_type::DataType`: The type of the [`Component`](component) to check for.
+"""
+function has_component(ecs_manager::ECSManager, entity::Entity, component_type::DataType)
+    if !haskey(ecs_manager.components, component_type)
+        return false
+    end
+    component_dict = ecs_manager.components[component_type]
+    if !haskey(component_dict, entity)
+        return false
+    end
+    return true
+end
+
+function shared_component!(ecs_manager::ECSManager, entity_1::Entity, entity_2::Entity, component_type::DataType)
+    if !has_component(ecs_manager, entity_1, component_type)
+        throw(ArgumentError("Entity 1 does not have component of type $component_type"))
+    end
+    component_dict = ecs_manager.components[component_type]
+    component = component_dict[entity_1]
+    add_component!(ecs_manager, entity_2, component)
+end
 
 # ------------
-# System 
+# Prebuilt Components
 # ------------
 
-function set_origin!(ecs_manager::ECSManager, entity::Entity, x::Float64, y::Float64)
-    origin = Origin2D(x, y)
-    add_component!(ecs_manager, entity, origin)
+for f in readdir(joinpath(@__DIR__, "Components"), join=true)
+    if endswith(f, ".jl")
+        println("Including $f")
+        include(f)
+    end
+end
+
+# ------------
+# Prebuilt Systems
+# ------------
+
+for f in readdir(joinpath(@__DIR__, "Systems"), join=true)
+    if endswith(f, ".jl")
+        println("Including $f")
+        include(f)
+    end
 end
 
 

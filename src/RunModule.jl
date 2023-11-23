@@ -1,10 +1,13 @@
 module RunModule
 
 # External Packages
+using Reexport
 
 # Internal Packages
 include("ECSModule.jl")
-using .ECSModule
+@reexport using .ECSModule
+include("PhysicsModule.jl")
+@reexport using .PhysicsModule
 
 # Exports
 export run_OdysseusEngine
